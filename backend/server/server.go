@@ -19,7 +19,6 @@ import (
 	"p-box/backend/modules/speedtest"
 	"p-box/backend/modules/subscription"
 	"p-box/backend/modules/system"
-	"p-box/backend/modules/wireguard"
 	"p-box/backend/websocket"
 )
 
@@ -71,9 +70,19 @@ func (s *Server) setupMiddleware() {
 	// 日志中间件
 	s.router.Use(middleware.Logger())
 
-	// CORS 中间件
+	// CORS 中间件 - 生产环境限制来源
+	allowedHosts := []string{"*"}
+	if config.IsDevMode() {
+		allowedHosts = []string{
+			"http://localhost:5174",
+			"http://127.0.0.1:5174",
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+		}
+	}
+	
 	s.router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     allowedHosts,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -189,19 +198,6 @@ func (s *Server) setupRoutes() {
 		// 测速模块
 		speedtestHandler := speedtest.NewHandler()
 		speedtestHandler.RegisterRoutes(api.Group("/speedtest"))
-
-		// WireGuard 模块
-		wgService := wireguard.NewService(s.config.DataDir)
-		wgHandler := wireguard.NewHandler(wgService)
-		wgHandler.RegisterRoutes(api)
-
-		// 监听 VPN 启动事件，延迟 5 秒后启动 WireGuard
-		s.proxyHandler.GetService().SetOnStartCallback(func() {
-			go func() {
-				time.Sleep(5 * time.Second)
-				wgService.AutoStartIfEnabled()
-			}()
-		})
 	}
 
 	// WebSocket 路由

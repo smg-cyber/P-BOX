@@ -42,8 +42,6 @@ func ParseURL(proxyURL string) (*ProxyNode, error) {
 		return ParseTUICURL(proxyURL)
 	} else if strings.HasPrefix(proxyURL, "shadowtls://") {
 		return ParseShadowTLSURL(proxyURL)
-	} else if strings.HasPrefix(proxyURL, "wireguard://") {
-		return nil, errors.New("wireguard 服务端不支持链接导入，请使用入口管理功能")
 	} else if strings.HasPrefix(proxyURL, "ssh://") {
 		return ParseSSHURL(proxyURL)
 	} else if strings.HasPrefix(proxyURL, "naive") {

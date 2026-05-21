@@ -22,7 +22,6 @@ import {
   Cpu,
   Github,
   SlidersHorizontal,
-  Network,
   Send,
 } from 'lucide-react'
 
@@ -46,7 +45,6 @@ const getSystemNavItems = (activeCore: 'mihomo' | 'singbox') => [
   activeCore === 'singbox'
     ? { path: '/singbox-settings', icon: SlidersHorizontal, labelKey: 'nav.singboxSettings', color: 'purple' }
     : { path: '/proxy-settings', icon: SlidersHorizontal, labelKey: 'nav.proxySettings', color: 'indigo' },
-  { path: '/wireguard', icon: Network, labelKey: 'nav.wireguard', color: 'cyan' },
   { path: '/logs', icon: FileText, labelKey: 'nav.logs', color: 'yellow' },
   { path: '/settings', icon: Settings, labelKey: 'nav.settings', color: 'rose' },
 ]

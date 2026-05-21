@@ -227,7 +227,7 @@ func getTUICFields() []FieldDefinition {
 	}
 }
 
-// getWireGuardFields WireGuard 字段定义
+// getWireGuardFields WireGuard 字段定义（客户端）
 func getWireGuardFields() []FieldDefinition {
 	return []FieldDefinition{
 		{Name: "private_key", Label: "Private Key", Type: "password", Required: true, Description: "Base64 编码的私钥"},
@@ -236,6 +236,9 @@ func getWireGuardFields() []FieldDefinition {
 		{Name: "local_address", Label: "本地地址", Type: "text", Required: true, Placeholder: "10.0.0.2/32", Description: "IPv4/IPv6 地址，用逗号分隔"},
 		{Name: "mtu", Label: "MTU", Type: "number", Required: false, Default: 1420, Min: 1280, Max: 1500},
 		{Name: "reserved", Label: "Reserved", Type: "text", Required: false, Placeholder: "0,0,0", Description: "三个十进制数字"},
+		{Name: "server", Label: "服务器地址", Type: "text", Required: true},
+		{Name: "server_port", Label: "服务器端口", Type: "number", Required: true, Default: 51820},
+		{Name: "udp", Label: "启用 UDP", Type: "boolean", Required: false, Default: true},
 	}
 }
 

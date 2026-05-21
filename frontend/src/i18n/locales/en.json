@@ -11,8 +11,7 @@
     "configGenerator": "Config Gen",
     "coreManage": "Core Manage",
     "proxySettings": "Proxy Settings",
-    "singboxSettings": "Sing-Box",
-    "wireguard": "WireGuard",
+    "singboxSettings": "Sing-Box Settings",
     "tools": "Tools",
     "settings": "Settings"
   },

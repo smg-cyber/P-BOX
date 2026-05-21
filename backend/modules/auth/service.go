@@ -2,7 +2,6 @@ package auth
 
 import (
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -10,6 +9,8 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // AuthConfig 认证配置
@@ -55,10 +56,11 @@ func (s *Service) loadConfig() {
 	data, err := os.ReadFile(s.configPath())
 	if err != nil {
 		// 使用默认配置
+		hash, _ := s.hashPassword("admin123")
 		s.config = AuthConfig{
 			Enabled:  false,
 			Username: "admin",
-			Password: s.hashPassword("admin123"),
+			Password: hash,
 			Avatar:   "",
 		}
 		s.saveConfig()
@@ -76,10 +78,19 @@ func (s *Service) saveConfig() error {
 	return os.WriteFile(s.configPath(), data, 0644)
 }
 
-// hashPassword 密码哈希
-func (s *Service) hashPassword(password string) string {
-	hash := sha256.Sum256([]byte(password + "p-box-salt"))
-	return hex.EncodeToString(hash[:])
+// hashPassword 密码哈希 (使用 bcrypt)
+func (s *Service) hashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
+}
+
+// verifyPassword 验证密码
+func (s *Service) verifyPassword(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 // generateToken 生成令牌
@@ -124,7 +135,7 @@ func (s *Service) Login(username, password string) (string, error) {
 		return "", fmt.Errorf("用户名或密码错误")
 	}
 
-	if s.hashPassword(password) != s.config.Password {
+	if !s.verifyPassword(password, s.config.Password) {
 		return "", fmt.Errorf("用户名或密码错误")
 	}
 
@@ -133,7 +144,7 @@ func (s *Service) Login(username, password string) (string, error) {
 	s.sessions[token] = &Session{
 		Token:     token,
 		Username:  username,
-		ExpiresAt: time.Now().Add(24 * time.Hour), // 24小时过期
+		ExpiresAt: time.Now().Add(24 * time.Hour), // 24 小时过期
 	}
 
 	return token, nil
@@ -182,15 +193,20 @@ func (s *Service) UpdatePassword(oldPassword, newPassword string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.hashPassword(oldPassword) != s.config.Password {
+	if !s.verifyPassword(oldPassword, s.config.Password) {
 		return fmt.Errorf("原密码错误")
 	}
 
 	if len(newPassword) < 6 {
-		return fmt.Errorf("密码长度至少6位")
+		return fmt.Errorf("密码长度至少 6 位")
 	}
 
-	s.config.Password = s.hashPassword(newPassword)
+	hash, err := s.hashPassword(newPassword)
+	if err != nil {
+		return fmt.Errorf("密码加密失败：%v", err)
+	}
+
+	s.config.Password = hash
 	// 清除所有会话，要求重新登录
 	s.sessions = make(map[string]*Session)
 	return s.saveConfig()

@@ -1,0 +1,78 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "simple-import-sort"
+  ],
+  "rules": {
+    // TypeScript
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
+    
+    // React
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    
+    // Import sort
+    "simple-import-sort/imports": ["warn", {
+      "groups": [
+        ["^react", "^\\."],
+        ["^@/", "^components/", "^utils/", "^hooks/", "^services/", "^stores/"],
+        ["^[^.]", "^\\./"],
+        ["^\\.(?!/?$)", "^\\.\\./?$"]
+      ]
+    }],
+    "simple-import-sort/exports": "warn",
+    
+    // Best practices
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "eqeqeq": ["warn", "always"],
+    "curly": ["warn", "all"],
+    "prefer-const": "warn",
+    "no-var": "warn"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {},
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "*.config.js",
+    "*.config.ts"
+  ]
+}

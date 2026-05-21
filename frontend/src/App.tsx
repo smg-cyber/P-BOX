@@ -16,7 +16,6 @@ import ConfigGeneratorPage from '@/pages/ConfigGeneratorPage'
 import CoreManagePage from '@/pages/CoreManagePage'
 import ProxySettingsPage from '@/pages/ProxySettingsPage'
 import LoginPage from '@/pages/LoginPage'
-import WireGuardPage from '@/pages/WireGuardPage'
 import LegalPage from '@/pages/LegalPage'
 import SingBoxSettingsPage from '@/pages/SingBoxSettingsPage'
 import SingBoxRulesetPage from '@/pages/SingBoxRulesetPage'
@@ -82,7 +81,6 @@ function App() {
                 <Route path="/singbox-settings" element={<SingBoxSettingsPage />} />
                 <Route path="/singbox-ruleset" element={<SingBoxRulesetPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/wireguard" element={<WireGuardPage />} />
                 <Route path="/legal" element={<LegalPage />} />
               </Routes>
             </Layout>
