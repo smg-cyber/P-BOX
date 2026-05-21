@@ -24,7 +24,7 @@ import (
 
 // 版本信息 (由 main.go 设置)
 var (
-	Version   = "2.0.3"
+	Version   = "2.1.0"
 	BuildTime = "unknown"
 )
 
